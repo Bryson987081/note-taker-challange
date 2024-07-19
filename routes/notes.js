@@ -2,11 +2,11 @@ const note = require('express').Router();
 const uuid = require('../helpers/uuid');
 const { readAndAppend, readFromFile } = require('../helpers/fsUtils');
 
-note.get('/', (req, res) =>
-    readFromFile('./db/db.json').then((data) => res.join(JSON.parse(data)))
+note.get('/api/notes', (req, res) =>
+    readFromFile('db/db.json').then((data) => res.json(JSON.parse(data)))
 );
 
-note.post('/', (req, res) => {
+note.post('/api/notes', (req, res) => {
     const { title, text} = req.body;
 
     if (title && text) {
@@ -16,7 +16,7 @@ note.post('/', (req, res) => {
             note_id: uuid(),
         };
 
-        readAndAppend(newNote, './db/db.json');
+        readAndAppend(newNote, 'db/db.json');
 
         const response = {
             status: 'success',
@@ -25,7 +25,7 @@ note.post('/', (req, res) => {
 
         res.join(response);
     } else {
-        res.join('Error postin note');
+        res.join('Error posting note');
     }
 });
 
